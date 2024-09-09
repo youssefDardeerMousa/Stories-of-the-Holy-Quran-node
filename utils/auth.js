@@ -23,7 +23,7 @@ const storeToken = async (userId, token) => {
 passport.use('google-login', new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: '/auth/google/login/callback'
+    callbackURL: 'https://stories-of-the-holy-quran-node.vercel.app/auth/google/login/callback'
   },
   async (accessToken, refreshToken, profile, done) => {
     try {
@@ -58,7 +58,7 @@ passport.use('google-login', new GoogleStrategy({
 passport.use('google-signup', new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: '/auth/google/signup/callback'
+    callbackURL: 'https://stories-of-the-holy-quran-node.vercel.app/auth/google/signup/callback'
   },
   async (accessToken, refreshToken, profile, done) => {
     try {
