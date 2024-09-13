@@ -12,7 +12,7 @@ export const runSQLScriptTokens = async (path) => {
     console.log('user_tokens table created successfully!');
     connectionsql.end();
   } catch (error) {
-    console.error('Error executing script:', error);
+    console.log('Error executing script:', error);
     throw error;
   }
 };

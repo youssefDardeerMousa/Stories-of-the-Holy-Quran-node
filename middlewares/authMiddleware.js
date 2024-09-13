@@ -9,8 +9,8 @@ export const Isauthenticate = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decodedToken;
     next();
   } catch (error) {
     throw new CustomError('Invalid token', 401);

@@ -8,7 +8,8 @@ export const runSQLScript = async (scriptPath) => {
     console.log('User Table Created successfully!');
     connectionsql.end();
   } catch (error) {
-    console.error('Error executing script:', error);
+    console.log('Error executing script:', error);
     throw error;
   }
 };
+
