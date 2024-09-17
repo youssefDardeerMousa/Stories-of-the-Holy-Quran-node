@@ -76,39 +76,31 @@ export const resolvers = {
         throw new CustomError('Failed to add user', 500);
       }
     },
+
     updateProfilePicture: async (_, { id, picture }) => {
       try {
         const conn = await connection();
         const [userCheck] = await conn.query('SELECT * FROM users WHERE id = ?', [id]);
-    
+        
         if (userCheck.length === 0) {
           throw new CustomError('User not found', 404);
         }
-    
+
         // Upload the new picture to Cloudinary
         const result = await cloudinary.uploader.upload(picture, {
           folder: 'user_pictures',
         });
-    
+
         // Update the user's profile picture in the database
         await conn.query('UPDATE users SET picture = ? WHERE id = ?', [result.secure_url, id]);
-    
-        // Fetch updated user data
+
         const [updatedUser] = await conn.query('SELECT * FROM users WHERE id = ?', [id]);
-    
-        // Generate new token with updated user information
-        const token = generateToken(updatedUser[0]);
-    
-        // Store the new token in the database
-        await storeToken(updatedUser[0].id, token);
-    
-        // Return the updated user and new token
-        return { user: updatedUser[0], token };
+        return updatedUser[0];
       } catch (error) {
         throw new CustomError('Failed to update profile picture', 500);
       }
-    }
-    ,
+    },
+
     deleteProfilePicture: async (_, { id }) => {
       try {
         const conn = await connection();
@@ -118,40 +110,18 @@ export const resolvers = {
           throw new CustomError('User not found', 404);
         }
     
-        // Get the user's current picture URL from the database
-        const currentPicture = userCheck[0].picture;
-    
-        // If the picture is not the default one, delete it from Cloudinary
-        if (currentPicture !== 'https://res.cloudinary.com/dhbl4eauf/image/upload/v1720194161/1000_F_349497933_Ly4im8BDmHLaLzgyKg2f2yZOvJjBtlw5_fylttm.jpg') {
-          // Extract the public ID of the image from the Cloudinary URL
-          const publicId = currentPicture.split('/').pop().split('.')[0]; // Adjust this if your URLs are formatted differently
-    
-          // Delete the image from Cloudinary
-          await cloudinary.uploader.destroy(`user_pictures/${publicId}`);
-        }
-    
         // Set the default picture URL
         const defaultPicture = 'https://res.cloudinary.com/dhbl4eauf/image/upload/v1720194161/1000_F_349497933_Ly4im8BDmHLaLzgyKg2f2yZOvJjBtlw5_fylttm.jpg';
-    
+        
         // Update the user's profile picture in the database to the default picture
         await conn.query('UPDATE users SET picture = ? WHERE id = ?', [defaultPicture, id]);
     
-        // Fetch updated user data
         const [updatedUser] = await conn.query('SELECT * FROM users WHERE id = ?', [id]);
-    
-        // Generate new token with updated user information
-        const token = generateToken(updatedUser[0]);
-    
-        // Store the new token in the database
-        await storeToken(updatedUser[0].id, token);
-    
-        // Return the updated user and new token
-        return { user: updatedUser[0], token };
+        return updatedUser[0];
       } catch (error) {
         throw new CustomError('Failed to delete profile picture', 500);
       }
     }
-    
     
   },
 };
