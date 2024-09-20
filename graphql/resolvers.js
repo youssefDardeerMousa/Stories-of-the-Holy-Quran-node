@@ -64,10 +64,10 @@ export const resolvers = {
         const hashedPassword = await bcrypt.hash(password, 10);
         const [result] = await conn.query(
           'INSERT INTO users (name, email, password, role, picture) VALUES (?, ?, ?, ?, ?)',
-          [name, email, hashedPassword, role || 'user', picture || 'default_picture_url']
+          [name, email, hashedPassword, role || 'user', picture || 'https://res.cloudinary.com/dhbl4eauf/image/upload/v1720194161/1000_F_349497933_Ly4im8BDmHLaLzgyKg2f2yZOvJjBtlw5_fylttm.jpg']
         );
 
-        const newUser = { id: result.insertId, name, email, role: role || 'user', picture: picture || 'default_picture_url' };
+        const newUser = { id: result.insertId, name, email, role: role || 'user', picture: picture || 'https://res.cloudinary.com/dhbl4eauf/image/upload/v1720194161/1000_F_349497933_Ly4im8BDmHLaLzgyKg2f2yZOvJjBtlw5_fylttm.jpg' };
         const token = generateToken(newUser);
         await storeToken(newUser.id, token);
 
