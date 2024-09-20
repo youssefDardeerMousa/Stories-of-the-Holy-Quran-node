@@ -121,7 +121,46 @@ export const resolvers = {
       } catch (error) {
         throw new CustomError('Failed to delete profile picture', 500);
       }
+    },
+    loginUser: async (_, { email, password }) => {
+      try {
+        const conn = await connection();
+        
+        // Find the user by email
+        const [user] = await conn.query('SELECT * FROM users WHERE email = ?', [email]);
+
+        if (user.length === 0) {
+          throw new CustomError('Invalid credentials', 401);
+        }
+
+        const foundUser = user[0];
+
+        // Check if the password matches
+        const isPasswordValid = await bcrypt.compare(password, foundUser.password);
+        if (!isPasswordValid) {
+          throw new CustomError('Invalid credentials', 401);
+        }
+
+        // Generate a token
+        const token = generateToken(foundUser);
+
+        // Store the token in the database
+        await storeToken(foundUser.id, token);
+
+        // Return the user and the token
+        return {
+          token,
+          user: {
+            id: foundUser.id,
+            name: foundUser.name,
+            email: foundUser.email,
+            role: foundUser.role,
+            picture: foundUser.picture,
+          },
+        };
+      } catch (error) {
+        throw new CustomError('Failed to login', 500);
+      }
     }
-    
   },
 };
