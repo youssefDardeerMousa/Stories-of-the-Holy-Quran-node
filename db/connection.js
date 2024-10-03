@@ -2,15 +2,14 @@ import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 dotenv.config();
 
-// إنشاء مسبح اتصالات (Connection Pool)
-const pool = mysql.createPool({
+export const pool = mysql.createPool({
   host: process.env.host,
   port: process.env.port,
   user: process.env.user,
   password: process.env.password,
   database: process.env.database,
   waitForConnections: true,
-  connectionLimit: 5,  // الحد الأقصى لعدد الاتصالات المفتوحة
+  connectionLimit: 5, 
   queueLimit: 0
 });
 
